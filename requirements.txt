@@ -1,4 +1,4 @@
-pip -upgrade 
+pip update
 streamlit
 tensorflow
 keras-facenet
