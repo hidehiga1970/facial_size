@@ -1,5 +1,5 @@
 
-pip -m
+pip -update
 streamlit
 tensorflow
 keras-facenet
