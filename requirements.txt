@@ -1,4 +1,4 @@
-install pip upgrade 
+pip install upgrade 
 streamlit
 tensorflow
 keras-facenet
