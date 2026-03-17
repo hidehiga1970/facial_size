@@ -1,0 +1,9 @@
+streamlit
+tensorflow
+keras-facenet
+mtcnn
+opencv-python-headless
+numpy
+pandas
+scikit-learn
+scipy
