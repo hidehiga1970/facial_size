@@ -1,5 +1,5 @@
 
-pip -upgrade pip
+install -upgrade pip
 streamlit
 tensorflow
 keras-facenet
@@ -9,4 +9,4 @@ numpy
 pandas
 scikit-learn
 scipy
-pip
+
