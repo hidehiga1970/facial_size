@@ -1,5 +1,5 @@
 
-pip  uninstall
+pip install
 streamlit
 tensorflow
 keras-facenet
