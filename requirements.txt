@@ -1,5 +1,5 @@
 
-adp pip install --upgrade pip
+adp update pip
 streamlit
 tensorflow
 keras-facenet
