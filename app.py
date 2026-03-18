@@ -81,7 +81,7 @@ st.set_page_config(page_title="顔→パラメータ推定")
 
 st.title("顔画像 → 2パラメータ推定AI")
 
-uploaded_file = st.file_uploader(""撮影 or アップロード"", type=["jpg","png"])
+uploaded_file = st.file_uploader("撮影 or アップロード", type=["jpg","png"])
 
 if uploaded_file is not None:
 
