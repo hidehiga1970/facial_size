@@ -1,6 +1,7 @@
 import streamlit as st
 import numpy as np
 import cv2
+import joblib
 
 from keras_facenet import FaceNet
 from tensorflow.keras.models import load_model
@@ -11,18 +12,12 @@ from mtcnn import MTCNN
 # ---------------------------
 model = load_model("face_parameter_model.keras")
 
-mean = np.load("scaler_mean.npy")
-scale = np.load("scaler_scale.npy")
-pca_components = np.load("pca_model.npy")
+# 前処理読み込み
+pca = joblib.load("pca.pkl")
+scaler = joblib.load("scaler.pkl")
 
 embedder = FaceNet()
 detector = MTCNN()
-
-# ---------------------------
-# PCA適用
-# ---------------------------
-def apply_pca(x):
-    return np.dot(x, pca_components.T)
 
 # ---------------------------
 # 顔検出
@@ -61,16 +56,18 @@ def predict(img):
     if face is None:
         return None,None
 
-    emb = get_embedding(face)
+    # ① embedding
+    emb = get_embedding(face)   # (512,)
 
-    emb = apply_pca(emb)
+    # ② PCA（学習済み）
+    emb = pca.transform([emb])  # (1,32)
 
-    emb = (emb - mean) / scale
+    # ③ Scaler（学習済み）
+    emb = scaler.transform(emb)
 
-    emb = np.expand_dims(emb,axis=0)
-
-    pred = model.predict(emb)
-
+    # ④ 推論
+    pred = model(emb, training=False).numpy()
+    
     return pred[0], face
 
 # ---------------------------
