@@ -73,7 +73,6 @@ def predict(img):
 
     return pred[0], face
 
-
 # ---------------------------
 # UI
 # ---------------------------
@@ -100,4 +99,3 @@ if uploaded_file is not None:
 
         st.success(f"Parameter1: {result[0]:.4f}")
         st.success(f"Parameter2: {result[1]:.4f}")
-
