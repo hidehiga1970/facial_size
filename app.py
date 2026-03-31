@@ -3,6 +3,7 @@ import numpy as np
 import cv2
 import joblib
 
+from sklearn.preprocessing import StandardScaler
 from keras_facenet import FaceNet
 from tensorflow.keras.models import load_model
 from mtcnn import MTCNN
@@ -10,11 +11,12 @@ from mtcnn import MTCNN
 # ---------------------------
 # モデル読み込み
 # ---------------------------
-model = load_model("face_parameter_model.keras")
+modelffs = load_model("ffs_model.keras")
 
 # 前処理読み込み
-pca = joblib.load("pca.pkl")
-scaler = joblib.load("scaler.pkl")
+ffselect = joblib.load("ffselect.pkl")
+sescaler = joblib.load("sescaler.pkl")
+y_scaler = joblib.load("yscaler.pkl")
 
 embedder = FaceNet()
 detector = MTCNN()
@@ -60,22 +62,24 @@ def predict(img):
     emb = get_embedding(face)   # (512,)
 
     # ② PCA（学習済み）
-    emb = pca.transform([emb])  # (1,32)
-
+    emb = ffselect.transform([emb])  # (1,32)
+    
     # ③ Scaler（学習済み）
-    emb = scaler.transform(emb)
+    emb = sescaler.transform(emb)
+    
 
     # ④ 推論
-    pred = model(emb, training=False).numpy()
+    pred = modelffs(emb, training=False).numpy()
+    pred = y_scaler.inverse_transform(pred)
     
-    return pred[0], face
+    return pred[0]
 
 # ---------------------------
 # UI
 # ---------------------------
-st.set_page_config(page_title="顔→パラメータ推定")
+st.set_page_config(page_title="顔→パラメータ推定→FF推定")
 
-st.title("顔画像 → 2パラメータ推定AI")
+st.title("顔画像 → 2パラメータ推定 → FF推定AI")
 
 uploaded_file = st.file_uploader("撮影 or アップロード", type=["jpg","png"])
 
@@ -87,12 +91,25 @@ if uploaded_file is not None:
 
     st.image(img, caption="入力画像")
 
-    result, face = predict(img)
+    result= predict(img)
 
     if result is None:
         st.error("顔が検出できませんでした")
     else:
-        st.image(face, caption="検出された顔")
+#        st.image(face, caption="検出された顔")
 
-        st.success(f"Parameter1: {result[0]:.4f}")
-        st.success(f"Parameter2: {result[1]:.4f}")
+        st.success(f"ParameterFW: {result[0]:.4f}")
+        st.success(f"ParameterFL: {result[1]:.4f}")
+        st.success(f"ParameterPC1: {result[2]:.4f}")
+        st.success(f"ParameterPC2: {result[3]:.4f}")
+        st.success(f"ParameterFF1: {result[4]:.4f}")
+        st.success(f"ParameterFF2: {result[5]:.4f}")
+        st.success(f"ParameterFF3: {result[6]:.4f}")
+        st.success(f"ParameterFF4: {result[7]:.4f}")
+        st.success(f"ParameterFF5: {result[8]:.4f}")
+        st.success(f"ParameterFF6: {result[9]:.4f}")
+        st.success(f"ParameterFF7: {result[10]:.4f}")
+
+#        st.success(f"ParameterFWFL: {result[0],result[1]:7.1f}")
+#        st.success(f"ParameterPC1PC2: {result[2],result[3]:10.3f}")
+#        st.success(f"ParameterFF: {result[4],result[5],result[6],result[7],result[8],result[9],result[10],result[11]:7.1f}")
